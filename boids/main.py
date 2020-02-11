@@ -7,7 +7,9 @@ import time
 
 from pyglet.gl import *
 from pyglet.window import key, mouse
+
 from .model import Model
+from .boids import Boids
 
 TICKS_PER_SEC = 60
 
@@ -41,10 +43,10 @@ FACES = [
 ]
 
 
-class Window(pyglet.window.Window):
+class Main(pyglet.window.Window):
 
     def __init__(self, *args, **kwargs):
-        super(Window, self).__init__(*args, **kwargs)
+        super(Main, self).__init__(*args, **kwargs)
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
@@ -86,6 +88,7 @@ class Window(pyglet.window.Window):
                                        color=(255, 255, 255, 255))
 
         self.model = Model(5, 5, 5)
+        self.boids = Boids(5)
 
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
 
@@ -287,10 +290,13 @@ class Window(pyglet.window.Window):
     def on_draw(self):
         """ Called by pyglet to draw the canvas.
         """
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
         self.clear()
         self.set_3d()
         glColor3d(1, 1, 1)
         self.model.draw()
+        self.boids.draw()
         # self.draw_focused_block()
         self.set_2d()
         self.draw_label()
@@ -300,7 +306,7 @@ class Window(pyglet.window.Window):
         """ If `exclusive` is True, the game will capture the mouse, if False
         the game will ignore the mouse.
         """
-        super(Window, self).set_exclusive_mouse(exclusive)
+        super(Main, self).set_exclusive_mouse(exclusive)
         self.exclusive = exclusive
 
     def draw_label(self):

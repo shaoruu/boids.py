@@ -18,8 +18,6 @@ class Model:
         pass
 
     def draw(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         # BORDERS
         # X
         for i in range(-1, 2, 2):
