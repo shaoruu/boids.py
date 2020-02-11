@@ -87,8 +87,11 @@ class Main(pyglet.window.Window):
                                        x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
                                        color=(255, 255, 255, 255))
 
-        self.model = Model(5, 5, 5)
-        self.boids = Boids(5)
+        mw = 10
+        mh = 10
+        md = 10
+        self.model = Model(mw, mh, md)
+        self.boids = Boids(2, self.model)
 
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
 
@@ -134,6 +137,7 @@ class Main(pyglet.window.Window):
         dt = min(dt, 0.2)
         for _ in xrange(m):
             self._update(dt / m)
+            self.boids.update(dt / m)
 
     def _update(self, dt):
         speed = WALKING_SPEED

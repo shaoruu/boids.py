@@ -2,15 +2,13 @@ from pyglet.gl import *
 
 
 class Model:
-    def __init__(self, width, height, depth, block_dimension=.1):
+    def __init__(self, width, height, depth):
         # A Batch is a collection of vertex lists for batched rendering.
         self.batch = pyglet.graphics.Batch()
 
         self.width = width
         self.height = height
         self.depth = depth
-
-        self.block_dimension = block_dimension
 
         self._initialize()
 
@@ -26,7 +24,7 @@ class Model:
                 mapped_z = self.depth / 2 * j
 
                 self.draw_box_at(position=(0, mapped_y, mapped_z), dimensions=(
-                    self.width, self.block_dimension, self.block_dimension))
+                    self.width, .1, .1))
 
         # Y
         for i in range(-1, 2, 2):
@@ -35,7 +33,7 @@ class Model:
                 mapped_z = self.depth / 2 * j
 
                 self.draw_box_at(position=(mapped_x, 0, mapped_z), dimensions=(
-                    self.block_dimension, self.height, self.block_dimension))
+                    .1, self.height, .1))
 
         # Z
         for i in range(-1, 2, 2):
@@ -44,7 +42,7 @@ class Model:
                 mapped_y = self.height / 2 * j
 
                 self.draw_box_at(position=(mapped_x, mapped_y, 0), dimensions=(
-                    self.block_dimension, self.block_dimension, self.depth))
+                    .1, .1, self.depth))
 
     def draw_box_at(self, position, dimensions):
         x, y, z = position
@@ -77,8 +75,10 @@ class Model:
         )
 
         glLineWidth(2.0)
+        glPushMatrix()
         glBegin(GL_LINES)
         for edge in edges:
             for vertex in edge:
                 glVertex3f(*vertices[vertex])
         glEnd()
+        glPopMatrix()
