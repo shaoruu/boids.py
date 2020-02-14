@@ -91,7 +91,7 @@ class Main(pyglet.window.Window):
         mh = 10
         md = 10
         self.model = Model(mw, mh, md)
-        self.boids = Boids(2, self.model)
+        self.boids = Boids(50, self.model)
 
         pyglet.clock.schedule_interval(self.update, 1.0 / TICKS_PER_SEC)
 

@@ -6,9 +6,13 @@ from pyrr import vector, vector3
 from pyglet.gl import *
 
 
+DEFAULT_VELOCITY = 1
 MAX_SPEED = 3
 MAX_FORCE = 3
 EPSILON = 0.01
+
+DESIRED_SEPARATION = 10
+NEIGHBOR_DIST = 20
 
 SEPARATION_WEIGHT = 1.5
 ALIGNMENT_WEIGHT = 1
@@ -28,10 +32,12 @@ class Boid:
 
         self.acceleration = vector3.create(0, 0, 0)
         self.velocity = vector3.create(
-            random.uniform(-0.01, 0.01), random.uniform(-0.01, 0.01), random.uniform(-0.01, 0.01))
+            random.uniform(-DEFAULT_VELOCITY, DEFAULT_VELOCITY),
+            random.uniform(-DEFAULT_VELOCITY, DEFAULT_VELOCITY),
+            random.uniform(-DEFAULT_VELOCITY, DEFAULT_VELOCITY)
+        )
 
     def separate(self):
-        desiredseparation = 10  # unit
         steer = vector3.create(0, 0, 0)
         count = 0
 
@@ -41,7 +47,7 @@ class Boid:
 
             _, d = vector.length([self.position, boid.position])
 
-            if d > 0 and d < desiredseparation:
+            if d > 0 and d < DESIRED_SEPARATION:
                 diff = self.position - boid.position
                 diff = vector.normalize(diff)
                 diff = diff / d
@@ -61,7 +67,6 @@ class Boid:
         return steer
 
     def align(self):
-        neighbordist = 20
         total = vector3.create(0, 0, 0)
         count = 0
 
@@ -71,7 +76,7 @@ class Boid:
 
             _, d = vector.length([self.position, boid.position])
 
-            if d > 0 and d < neighbordist:
+            if d > 0 and d < NEIGHBOR_DIST:
                 total = total + boid.velocity
                 count = count + 1
 
@@ -86,7 +91,6 @@ class Boid:
         return vector3.create(0, 0, 0)
 
     def cohesion(self):
-        neighbordist = 20
         total = vector3.create(0, 0, 0)
         count = 0
 
@@ -96,7 +100,7 @@ class Boid:
 
             _, d = vector.length([self.position, boid.position])
 
-            if d > 0 and d < neighbordist:
+            if d > 0 and d < NEIGHBOR_DIST:
                 total = total + boid.position
                 count = count + 1
 
@@ -130,8 +134,11 @@ class Boid:
         self.apply_force(ali)
         self.apply_force(coh)
 
+    def radian_to_degree(radian):
+        return radian * 180 / math.pi
+
     def update(self, dt):
-        self.flock()
+        # self.flock()
 
         self.velocity = self.velocity + self.acceleration
         self.velocity = vector3.create(
@@ -147,41 +154,57 @@ class Boid:
         normalized = vector.normalize(self.velocity)
         normalized = normalized * math.pi
 
-        # if self.position[0] > bw / 2:
-        #     self.position[0] = bw / 2 - EPSILON
-        #     self.velocity[0] = -self.velocity[0]
-        # elif self.position[0] < -bw / 2:
-        #     self.position[0] = -bw / 2 + EPSILON
-        #     self.velocity[0] = -self.velocity[0]
-
-        # if self.position[1] > bh / 2:
-        #     self.position[1] = bh / 2 - EPSILON
-        #     self.velocity[1] = -self.velocity[1]
-        # elif self.position[1] < -bh / 2:
-        #     self.position[1] = -bh / 2 + EPSILON
-        #     self.velocity[1] = -self.velocity[1]
-
-        # if self.position[2] > bd / 2:
-        #     self.position[2] = bd / 2 - EPSILON
-        #     self.velocity[2] = -self.velocity[2]
-        # elif self.position[2] < -bd / 2:
-        #     self.position[2] = -bd / 2 + EPSILON
-        #     self.velocity[2] = -self.velocity[2]
-
         if self.position[0] > bw / 2:
             self.position[0] = bw / 2 - EPSILON
+            self.velocity[0] = -self.velocity[0]
         elif self.position[0] < -bw / 2:
             self.position[0] = -bw / 2 + EPSILON
+            self.velocity[0] = -self.velocity[0]
 
         if self.position[1] > bh / 2:
             self.position[1] = bh / 2 - EPSILON
+            self.velocity[1] = -self.velocity[1]
         elif self.position[1] < -bh / 2:
             self.position[1] = -bh / 2 + EPSILON
+            self.velocity[1] = -self.velocity[1]
 
         if self.position[2] > bd / 2:
             self.position[2] = bd / 2 - EPSILON
+            self.velocity[2] = -self.velocity[2]
         elif self.position[2] < -bd / 2:
             self.position[2] = -bd / 2 + EPSILON
+            self.velocity[2] = -self.velocity[2]
+
+        # if self.position[0] > bw / 2:
+        #     self.position[0] = bw / 2 - EPSILON
+        # elif self.position[0] < -bw / 2:
+        #     self.position[0] = -bw / 2 + EPSILON
+
+        # if self.position[1] > bh / 2:
+        #     self.position[1] = bh / 2 - EPSILON
+        # elif self.position[1] < -bh / 2:
+        #     self.position[1] = -bh / 2 + EPSILON
+
+        # if self.position[2] > bd / 2:
+        #     self.position[2] = bd / 2 - EPSILON
+        # elif self.position[2] < -bd / 2:
+        #     self.position[2] = -bd / 2 + EPSILON
+
+        dx, dy, dz = vector.normalize(self.velocity)
+        # base = math.sqrt(dz**2 + dx**2)
+        # raise_ratio = 1 / dy
+        # print(dx, dy, dz, raise_ratio)
+        # if raise_ratio:
+        # y_raise = math.asin(raise_ratio)
+        # y_twist = math.atan2(dz, dx) * 180 / math.pi
+        y_twist = random.uniform(0, 1) * 180 / math.pi
+        # self.rotation[0] = y_raise
+        if not math.isnan(y_twist):
+            self.rotation[0] = y_twist
+        # y_twist = math.atan2(dy, dx)
+        # y_raise = math.asin(raise_ratio)
+        # self.rotation[2] = y_twist
+        # self.rotation[0] = y_raise
 
     def draw(self):
         x, y, z = self.position

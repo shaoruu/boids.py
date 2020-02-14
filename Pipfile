@@ -9,6 +9,7 @@ pyopengl-accelerate = "*"
 pyglet = "*"
 numpy = "*"
 pyrr = "*"
+pygame = "===2.0.0.dev6"
 
 [dev-packages]
 "autopep8" = "*"

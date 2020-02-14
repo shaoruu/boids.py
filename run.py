@@ -6,7 +6,7 @@ from boids.initialize import setup_gl
 
 
 def main():
-    boids = Main(width=800, height=600, caption='Pyglet', resizable=True)
+    boids = Main(width=1600, height=1200, caption='Pyglet', resizable=True)
     boids.set_exclusive_mouse(True)
     setup_gl()
     pyglet.app.run()
