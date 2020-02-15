@@ -29,17 +29,18 @@ class Main(Base):
         self.scene.add(DirectionalLight(direction=[-1, -1, -1]))
 
         self.camera = PerspectiveCamera(aspectRatio=WINDOW_WIDTH/WINDOW_HEIGHT)
-        self.camera.transform.setPosition(0, 0, 7)
+        self.camera.transform.setPosition(0, 0, 14)
         self.camera.transform.lookAt(0, 0, 0)
         self.controls = FirstPersonController(self.input, self.camera)
 
-        self.borders = Borders(self.scene, 10, 10, 10)
+        self.borders = Borders(self.scene, 40, 40, 40)
         self.boids = Boids(self.scene, BOIDS_COUNT, self.borders)
 
     def update(self):
-        self.controls.update()
-
         self.check_resize()
+
+        self.controls.update()
+        self.boids.update(1/60)
 
         self.renderer.render(self.scene, self.camera)
 

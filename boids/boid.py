@@ -27,7 +27,10 @@ class Boid:
 
         self.others = boids
 
+        self.position = vector3.create(0, 0, 0)
+
         self.acceleration = vector3.create(0, 0, 0)
+        # self.velocity = vector3.create(1, 0, 0)
         self.velocity = vector3.create(
             random.uniform(-DEFAULT_VELOCITY, DEFAULT_VELOCITY),
             random.uniform(-DEFAULT_VELOCITY, DEFAULT_VELOCITY),
@@ -50,14 +53,18 @@ class Boid:
         # UPDATE ROTATION
         x, y, z = self.transform.getPosition()
         self.transform.lookAt(x + dx, y + dy, z + dz)
+        self.transform.rotateX(-math.pi/2, 1)  # fix rotation
 
         # UPDATE POSITION
         self.transform.translate(dx, dy, dz)
         self.acceleration = vector3.create(0, 0, 0)
 
-        bw = self.borders.width
-        bh = self.borders.height
-        bd = self.borders.depth
+        x, y, z = self.transform.getPosition()
+        self.position[0] = x
+        self.position[1] = y
+        self.position[2] = z
+
+        bw, bh, bd = self.borders.get_dimensions()
 
         normalized = vector.normalize(self.velocity)
         normalized = normalized * math.pi
@@ -82,3 +89,5 @@ class Boid:
         elif self.position[2] < -bd / 2:
             self.position[2] = -bd / 2 + EPSILON
             self.velocity[2] = -self.velocity[2]
+
+        self.transform.setPosition(x, y, z)

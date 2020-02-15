@@ -73,6 +73,10 @@ class Base(object):
                 fileName = "image-" + timeString + ".png"
                 pygame.image.save(self.screen, fileName)
 
+            # close (Ctrl+W)
+            if (self.input.isKeyPressed(pygame.K_LCTRL) or self.input.isKeyPressed(pygame.K_RCTRL)) and self.input.isKeyDown(pygame.K_w):
+                break
+
             self.deltaTime = self.clock.get_time() / 1000.0
 
             self.update()
