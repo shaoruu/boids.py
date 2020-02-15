@@ -35,12 +35,12 @@ class FirstPersonController(object):
         self.KEY_MOVE_BACKWARDS = pygame.K_s
         self.KEY_MOVE_LEFT = pygame.K_a
         self.KEY_MOVE_RIGHT = pygame.K_d
-        self.KEY_MOVE_UP = pygame.K_r
-        self.KEY_MOVE_DOWN = pygame.K_f
+        self.KEY_MOVE_UP = pygame.K_SPACE
+        self.KEY_MOVE_DOWN = pygame.K_LSHIFT
         self.KEY_TURN_LEFT = pygame.K_q
         self.KEY_TURN_RIGHT = pygame.K_e
-        self.KEY_LOOK_UP = pygame.K_t
-        self.KEY_LOOK_DOWN = pygame.K_g
+        self.KEY_LOOK_UP = pygame.K_r
+        self.KEY_LOOK_DOWN = pygame.K_f
 
     def setSpeed(self, unitsPerSecond=1, degreesPerSecond=60):
         self.unitsPerSecond = unitsPerSecond

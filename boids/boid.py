@@ -60,9 +60,7 @@ class Boid:
         self.acceleration = vector3.create(0, 0, 0)
 
         x, y, z = self.transform.getPosition()
-        self.position[0] = x
-        self.position[1] = y
-        self.position[2] = z
+        self.position = vector3.create(x, y, z)
 
         bw, bh, bd = self.borders.get_dimensions()
 
@@ -89,5 +87,3 @@ class Boid:
         elif self.position[2] < -bd / 2:
             self.position[2] = -bd / 2 + EPSILON
             self.velocity[2] = -self.velocity[2]
-
-        self.transform.setPosition(x, y, z)
