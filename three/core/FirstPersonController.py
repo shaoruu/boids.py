@@ -22,7 +22,7 @@ class FirstPersonController(object):
 
         # control rate of movement
         self.deltaTime = 1.0/60.0  # TODO: get actual number from input?
-        self.unitsPerSecond = 1
+        self.unitsPerSecond = 5
         self.moveAmount = self.unitsPerSecond * self.deltaTime
         self.degreesPerSecond = 60
         self.turnAmount = self.degreesPerSecond * \
