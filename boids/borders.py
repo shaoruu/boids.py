@@ -5,6 +5,8 @@ from three.mathutils import Matrix
 
 CORNER_COLOR = [1.0, 1.0, 1.0]
 BORDER_COLOR = [0.9, 0.9, 0.9]
+CORNER_ALPHA = .15
+BORDER_ALPHA = .1
 BLOCK_WIDTH = .2
 
 
@@ -16,7 +18,7 @@ class Borders:
         self.height = height
         self.depth = depth
 
-        # self.generate()
+        self.generate()
 
     def generate(self):
         width = self.width
@@ -25,7 +27,8 @@ class Borders:
 
         # CORNERS
         corner_geo = BoxGeometry(BLOCK_WIDTH, BLOCK_WIDTH, BLOCK_WIDTH)
-        corner_mat = SurfaceLightMaterial(color=CORNER_COLOR)
+        corner_mat = SurfaceLightMaterial(
+            color=CORNER_COLOR, alpha=CORNER_ALPHA)
 
         for i in range(-1, 2, 2):
             for j in range(-1, 2, 2):
@@ -41,7 +44,7 @@ class Borders:
                     self.scene.add(corner_mesh)
 
         # EDGES
-        edge_mat = SurfaceLightMaterial(color=BORDER_COLOR)
+        edge_mat = SurfaceLightMaterial(color=BORDER_COLOR, alpha=BORDER_ALPHA)
 
         # X
         for i in range(-1, 2, 2):

@@ -9,16 +9,12 @@ from three.core import Mesh
 
 
 DEFAULT_VELOCITY = 2
-MAX_SPEED = 2
 MAX_FORCE = 4
 EPSILON = 0.05
 
 DESIRED_SEPARATION = 4
 NEIGHBOR_DIST = 6
 
-SEPARATION_GAIN = 0.6
-ALIGNMENT_GAIN = 1.8
-COHESION_GAIN = 0.6
 BOUND_STRENGTH = 3
 BORDER_DIST = .5
 
@@ -54,7 +50,7 @@ class Boid:
 
         self.scene.add(self.mesh)
 
-    def separate(self, octree):
+    def separate(self, octree, gain):
         steer = vector3.create(0.0, 0.0, 0.0)
 
         boids = octree.find_within_range(
@@ -72,15 +68,15 @@ class Boid:
             offset = self.position - boid.position
             steer -= offset
 
-        steer *= SEPARATION_GAIN
+        steer *= gain
 
         return steer
 
-    def align(self, octree):
+    def align(self, octree, gain, neighbor_dist):
         total = vector3.create(0.0, 0.0, 0.0)
 
         boids = octree.find_within_range(
-            self.position, DESIRED_SEPARATION, "cube")
+            self.position, neighbor_dist, "cube")
         boids = [boid[0][1] for boid in boids]
 
         if len(boids) <= 1:
@@ -94,16 +90,15 @@ class Boid:
 
         total /= len(boids)
         total -= self.velocity
+        total *= gain
 
-        self.apply_limit(total, MAX_FORCE)
+        return total
 
-        return total / (15 / ALIGNMENT_GAIN)
-
-    def cohesion(self, octree):
+    def cohesion(self, octree, gain, neighbor_dist):
         total = vector3.create(0.0, 0.0, 0.0)
 
         boids = octree.find_within_range(
-            self.position, DESIRED_SEPARATION, "cube")
+            self.position, neighbor_dist, "cube")
         boids = [boid[0][1] for boid in boids]
 
         if len(boids) <= 1:
@@ -116,43 +111,36 @@ class Boid:
             total += boid.position
 
         total /= len(boids)
-        total *= COHESION_GAIN
-
-        self.apply_limit(total, MAX_FORCE)
+        total *= gain
 
         return total
 
-    def bound(self):
+    def bound(self, bound_strength, bound_dist):
         bw, bh, bd = self.borders.get_dimensions()
 
         steer = vector3.create(0.0, 0.0, 0.0)
-        # bounding_force = .05 * BOUND_STRENGTH
-        bounding_force = BOUND_STRENGTH
-
         x, y, z = self.position
 
         if x > bw/2 - BORDER_DIST:
             diff = abs(x - bw/2)
-            steer[0] = -bounding_force * diff
-        if x < -bw/2 + BORDER_DIST:
+            steer[0] = -bound_strength * diff
+        elif x < -bw/2 + BORDER_DIST:
             diff = abs(x - bw/2)
-            steer[0] = bounding_force * diff
+            steer[0] = bound_strength * diff
 
         if y > bh/2 - BORDER_DIST:
             diff = abs(y - bh/2)
-            steer[1] = -bounding_force * diff
-        if y < -bh/2 + BORDER_DIST:
+            steer[1] = -bound_strength * diff
+        elif y < -bh/2 + BORDER_DIST:
             diff = abs(y - bh/2)
-            steer[1] = bounding_force * diff
+            steer[1] = bound_strength * diff
 
         if z > bd/2 - BORDER_DIST:
             diff = abs(z - bd/2)
-            steer[2] = -bounding_force * diff
-        if z < -bd/2 + BORDER_DIST:
+            steer[2] = -bound_strength * diff
+        elif z < -bd/2 + BORDER_DIST:
             diff = abs(z - bd/2)
-            steer[2] = bounding_force * diff
-
-        # self.apply_limit(steer, MAX_FORCE)
+            steer[2] = bound_strength * diff
 
         return steer
 
@@ -161,27 +149,37 @@ class Boid:
             v = vector.normalize(v)
             v *= max
 
-    def apply_force(self, force):
+    def apply_force(self, force, max_force=math.inf):
+        self.apply_limit(force, max_force)
         self.acceleration = self.acceleration + force
 
-    def flock(self, octree):
-        sep = self.separate(octree)
-        self.apply_force(sep)
+    def flock(self, octree, values):
+        max_force = values['force']
+        sep_gain = values['separation']
+        ali_gain = values['alignment']
+        coh_gain = values['cohesion']
+        bound_strength = values['bound']
+        neighbor_dist = values['neighbor']
+        bound_dist = values['bound_dist']
 
-        ali = self.align(octree)
-        self.apply_force(ali)
+        sep = self.separate(octree, sep_gain)
+        self.apply_force(sep, max_force)
 
-        coh = self.cohesion(octree)
-        self.apply_force(coh)
+        ali = self.align(octree, ali_gain, neighbor_dist)
+        self.apply_force(ali, max_force)
 
-        bound = self.bound()
-        self.apply_force(bound)
+        coh = self.cohesion(octree, coh_gain, neighbor_dist)
+        self.apply_force(coh, max_force)
 
-    def update(self, dt, octree):
-        self.flock(octree)
+        bound = self.bound(bound_strength, bound_dist)
+        self.apply_force(bound, max_force)
+
+    def update(self, dt, octree, values):
+        if self.should_flock():
+            self.flock(octree, values)
 
         self.velocity = self.velocity + self.acceleration
-        self.apply_limit(self.velocity, MAX_SPEED)
+        self.apply_limit(self.velocity, values['speed'])
         dx, dy, dz = self.velocity * dt
 
         # UPDATE ROTATION
@@ -212,6 +210,8 @@ class Boid:
         # elif self.position[2] < -bd / 2:
         #     self.position[2] = bd / 2 - EPSILON
 
+        # bw, bh, bd = self.borders.get_dimensions()
+
         # if self.position[0] > bw / 2:
         #     self.position[0] = bw / 2 - EPSILON
         #     self.velocity[0] = -self.velocity[0]
@@ -235,3 +235,7 @@ class Boid:
 
         # x, y, z = self.position
         # self.transform.setPosition(x, y, z)
+
+    def should_flock(self):
+        return True
+        # return random.uniform(0, 1) > 0.3

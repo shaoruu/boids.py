@@ -6,7 +6,7 @@ from ..mathutils import Matrix
 
 class FirstPersonController(object):
 
-    def __init__(self, input, target):
+    def __init__(self, input, target, box_dimension):
 
         super().__init__()
 
@@ -22,7 +22,7 @@ class FirstPersonController(object):
 
         # control rate of movement
         self.deltaTime = 1.0/60.0  # TODO: get actual number from input?
-        self.unitsPerSecond = 5
+        self.unitsPerSecond = box_dimension * .5
         self.moveAmount = self.unitsPerSecond * self.deltaTime
         self.degreesPerSecond = 60
         self.turnAmount = self.degreesPerSecond * \
