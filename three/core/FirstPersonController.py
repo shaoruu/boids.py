@@ -24,7 +24,7 @@ class FirstPersonController(object):
         self.deltaTime = 1.0/60.0  # TODO: get actual number from input?
         self.unitsPerSecond = box_dimension * .5
         self.moveAmount = self.unitsPerSecond * self.deltaTime
-        self.degreesPerSecond = 60
+        self.degreesPerSecond = 90
         self.turnAmount = self.degreesPerSecond * \
             (3.1415926 / 180) * self.deltaTime
 

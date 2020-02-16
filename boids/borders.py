@@ -3,11 +3,12 @@ from three.geometry import BoxGeometry
 from three.material import SurfaceLightMaterial
 from three.mathutils import Matrix
 
+from .config import BLOCK_WIDTH
+
 CORNER_COLOR = [1.0, 1.0, 1.0]
 BORDER_COLOR = [0.9, 0.9, 0.9]
 CORNER_ALPHA = .15
 BORDER_ALPHA = .1
-BLOCK_WIDTH = .2
 
 
 class Borders:

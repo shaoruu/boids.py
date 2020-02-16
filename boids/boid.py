@@ -22,11 +22,12 @@ BOID_RANGE = 5
 
 
 class Boid:
-    def __init__(self, scene, borders, color, radius=.2, height=.4):
+    def __init__(self, scene, init_pos, borders, obstacles, color, radius=.2, height=.4):
         self.scene = scene
         self.borders = borders
+        self.obstacles = obstacles
 
-        self.position = vector3.create(0.0, 0.0, 0.0)
+        self.position = vector3.create(*init_pos)
 
         self.acceleration = vector3.create(0.0, 0.0, 0.0)
         # self.velocity = vector3.create(1, 0, 0)
@@ -41,12 +42,7 @@ class Boid:
         self.mesh = Mesh(self.geometry, self.material)
         self.transform = self.mesh.transform
 
-        bw, bh, bd = self.borders.get_dimensions()
-        self.transform.translate(
-            random.uniform(-bw/2+EPSILON, bw/2-EPSILON),
-            random.uniform(-bh/2+EPSILON, bh/2-EPSILON),
-            random.uniform(-bd/2+EPSILON, bd/2-EPSILON)
-        )
+        self.transform.translate(*self.position)
 
         self.scene.add(self.mesh)
 
@@ -144,6 +140,39 @@ class Boid:
 
         return steer
 
+    def avoid(self, obstacle, avoidance, avoidance_dist):
+        obs_dim = self.obstacles.dimension
+        ox, oy, oz = obstacle.position
+
+        steer = vector3.create(0.0, 0.0, 0.0)
+        x, y, z = self.position
+
+        if (x <= ox+obs_dim/2 + avoidance_dist and x >= ox-obs_dim/2 + avoidance_dist)\
+                and (y <= oy+obs_dim/2 + avoidance_dist and y >= oy-obs_dim/2 + avoidance_dist)\
+                and (z <= oz+obs_dim/2 + avoidance_dist and z >= oz-obs_dim/2 - avoidance_dist):
+            if x > ox and x <= ox+obs_dim/2 + avoidance_dist:
+                diff = abs(x - (ox+obs_dim/2))
+                steer[0] = avoidance * diff
+            elif x < ox and x >= ox-obs_dim/2 - avoidance_dist:
+                diff = abs(x - (ox-obs_dim/2))
+                steer[0] = -avoidance * diff
+
+            if y > oy and y <= oy+obs_dim/2 + avoidance_dist:
+                diff = abs(y - (oy+obs_dim/2))
+                steer[1] = avoidance * diff
+            elif y < oy and y >= oy-obs_dim/2 - avoidance_dist:
+                diff = abs(y - (oy-obs_dim/2))
+                steer[1] = -avoidance * diff
+
+            if z > oz and z <= oz+obs_dim/2 + avoidance_dist:
+                diff = abs(z - (oz+obs_dim/2))
+                steer[2] = avoidance * diff
+            elif z < oz and z >= oz-obs_dim/2 - avoidance_dist:
+                diff = abs(z - (oz-obs_dim/2))
+                steer[2] = -avoidance * diff
+
+        return steer
+
     def apply_limit(self, v, max):
         if vector.length(v) > max:
             v2 = vector.normalize(v)
@@ -164,8 +193,10 @@ class Boid:
         ali_gain = values['alignment']
         coh_gain = values['cohesion']
         bound_strength = values['bound']
+        avoidance_strength = values['avoid']
         neighbor_dist = values['neighbor']
         bound_dist = values['bound_dist']
+        avoidance_dist = values['avoidance_dist']
 
         sep = self.separate(octree, sep_gain)
         self.apply_force(sep, max_force)
@@ -178,6 +209,10 @@ class Boid:
 
         bound = self.bound(bound_strength, bound_dist)
         self.apply_force(bound, max_force, limit=False)
+
+        for obstacle in self.obstacles.get_obstacles():
+            avoid = self.avoid(obstacle, avoidance_strength, avoidance_dist)
+            self.apply_force(avoid, max_force, limit=False)
 
     def update(self, dt, octree, values):
         if self.should_flock():

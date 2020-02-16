@@ -6,24 +6,15 @@ from three.cameras import PerspectiveCamera
 from three.lights import AmbientLight, DirectionalLight
 
 from .borders import Borders
+from .obstacles import Obstacles
 from .boids import Boids
-
-
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
-
-# BOIDS_COUNT = 1
-BOIDS_COUNT = 5
-
-BOX_DIM = 40
-
-DEFAULT_SPEED = 5
-DEFAULT_FORCE = 5
-DEFAULT_SEPARATION = 5
-DEFAULT_ALIGNMENT = 5
-DEFAULT_COHESION = 5
-DEFAULT_BOUND = 5
-DEFAULT_NEIGHBOR_DIST = 5
+from .config import (
+    WINDOW_WIDTH, WINDOW_HEIGHT, BOIDS_COUNT, BOX_DIM,
+    OBSTACLE_DIM, BLOCK_WIDTH, DEFAULT_SPEED, DEFAULT_FORCE,
+    DEFAULT_ALIGNMENT, DEFAULT_SEPARATION, DEFAULT_COHESION,
+    DEFAULT_BOUND, DEFAULT_AVOID, DEFAULT_NEIGHBOR_DIST,
+    OBSTACLE_COUNT
+)
 
 
 class Main(Base):
@@ -46,9 +37,15 @@ class Main(Base):
         self.controls = FirstPersonController(self.input, self.camera, BOX_DIM)
 
         self.borders = Borders(self.scene, BOX_DIM, BOX_DIM, BOX_DIM)
-        self.boids1 = Boids(self.scene, BOIDS_COUNT, self.borders, [.5, .5, 1])
+        self.obstacles = Obstacles(
+            self.scene, OBSTACLE_COUNT, OBSTACLE_DIM, self.borders)
+
+        self.boids1 = Boids(self.scene, BOIDS_COUNT,
+                            self.borders, self.obstacles, [.5, .5, 1])
         self.boids2 = Boids(self.scene, BOIDS_COUNT,
-                            self.borders, [.7, .7, .2])
+                            self.borders, self.obstacles, [.7, .7, .2])
+        self.boids3 = Boids(self.scene, BOIDS_COUNT,
+                            self.borders, self.obstacles, [.2, .2, .6])
 
         self.init_ui()
 
@@ -85,6 +82,11 @@ class Main(Base):
         self.bound_slider.pack()
         self.bound_slider.set(DEFAULT_BOUND)
 
+        self.avoid_slider = Scale(
+            self.master, from_=0, to=10, orient=HORIZONTAL, label="Avoidance Force")
+        self.avoid_slider.pack()
+        self.avoid_slider.set(DEFAULT_AVOID)
+
         self.neighbor_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Neighbor Dist.')
         self.neighbor_slider.pack()
@@ -95,25 +97,33 @@ class Main(Base):
         self.bound_dist_slider.pack()
         self.bound_dist_slider.set(5)
 
+        self.avoid_dist_slider = Scale(
+            self.master, from_=0, to=10, orient=HORIZONTAL, label='Avoidance Dist.')
+        self.avoid_dist_slider.pack()
+        self.avoid_dist_slider.set(5)
+
     def update(self):
         self.check_resize()
 
         self.master.update()
 
         values = {
-            'speed': self.speed_slider.get() * 5,
+            'speed': self.speed_slider.get(),
             'force': self.force_slider.get() * 5,
             'separation': self.separation_slider.get() / 100,
             'alignment': self.alignment_slider.get() / 100,
             'cohesion': self.cohesion_slider.get() / 100,
             'bound': self.bound_slider.get() / 5,
+            'avoid': self.avoid_slider.get() / 100,
             'neighbor': self.neighbor_slider.get(),
-            'bound_dist': self.bound_dist_slider.get(),
+            'bound_dist': self.bound_dist_slider.get() / 30,
+            'avoidance_dist': self.avoid_dist_slider.get() / 30
         }
 
         self.controls.update()
         self.boids1.update(1/60, values)
         self.boids2.update(1/60, values)
+        self.boids3.update(1/60, values)
 
         self.renderer.render(self.scene, self.camera)
 
