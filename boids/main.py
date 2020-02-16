@@ -32,7 +32,7 @@ class Main(Base):
         self.scene.add(DirectionalLight(direction=[-1, -1, -1]))
 
         self.camera = PerspectiveCamera(aspectRatio=WINDOW_WIDTH/WINDOW_HEIGHT)
-        self.camera.transform.setPosition(0, 0, BOX_DIM / 2)
+        self.camera.transform.setPosition(0, 0, BOX_DIM / 3)
         self.camera.transform.lookAt(0, 0, 0)
         self.controls = FirstPersonController(self.input, self.camera, BOX_DIM)
 
