@@ -40,3 +40,4 @@ python run.py
 ## Resources
 
 - [Boids (Flocks, Herds, and Schools)](https://www.red3d.com/cwr/boids/)
+- [ThreePY (ThreeJS in Python)](https://github.com/stemkoski/three.py)
