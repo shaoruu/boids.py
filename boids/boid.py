@@ -22,7 +22,7 @@ BOID_RANGE = 5
 
 
 class Boid:
-    def __init__(self, scene, borders, radius=.2, height=.4):
+    def __init__(self, scene, borders, color, radius=.2, height=.4):
         self.scene = scene
         self.borders = borders
 
@@ -37,7 +37,7 @@ class Boid:
         )
 
         self.geometry = ConeGeometry(radius=radius, height=height)
-        self.material = SurfaceLightMaterial(color=[.5, .5, 1])
+        self.material = SurfaceLightMaterial(color=color)
         self.mesh = Mesh(self.geometry, self.material)
         self.transform = self.mesh.transform
 
@@ -89,7 +89,7 @@ class Boid:
             total += boid.velocity
 
         total /= len(boids)
-        total -= self.velocity
+        # total -= self.velocity
         total *= gain
 
         return total
@@ -146,11 +146,16 @@ class Boid:
 
     def apply_limit(self, v, max):
         if vector.length(v) > max:
-            v = vector.normalize(v)
-            v *= max
+            v2 = vector.normalize(v)
+            v2 *= max
+            a, b, c = v2
+            v[0] = a
+            v[1] = b
+            v[2] = c
 
-    def apply_force(self, force, max_force=math.inf):
-        self.apply_limit(force, max_force)
+    def apply_force(self, force, max_force=math.inf, limit=True):
+        if limit:
+            self.apply_limit(force, max_force)
         self.acceleration = self.acceleration + force
 
     def flock(self, octree, values):
@@ -172,7 +177,7 @@ class Boid:
         self.apply_force(coh, max_force)
 
         bound = self.bound(bound_strength, bound_dist)
-        self.apply_force(bound, max_force)
+        self.apply_force(bound, max_force, limit=False)
 
     def update(self, dt, octree, values):
         if self.should_flock():

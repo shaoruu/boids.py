@@ -13,15 +13,15 @@ WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
 
 # BOIDS_COUNT = 1
-BOIDS_COUNT = 30
+BOIDS_COUNT = 5
 
-BOX_DIM = 80
+BOX_DIM = 40
 
 DEFAULT_SPEED = 5
 DEFAULT_FORCE = 5
-DEFAULT_SEPARATION = 3
+DEFAULT_SEPARATION = 5
 DEFAULT_ALIGNMENT = 5
-DEFAULT_COHESION = 2
+DEFAULT_COHESION = 5
 DEFAULT_BOUND = 5
 DEFAULT_NEIGHBOR_DIST = 5
 
@@ -46,7 +46,9 @@ class Main(Base):
         self.controls = FirstPersonController(self.input, self.camera, BOX_DIM)
 
         self.borders = Borders(self.scene, BOX_DIM, BOX_DIM, BOX_DIM)
-        self.boids = Boids(self.scene, BOIDS_COUNT, self.borders)
+        self.boids1 = Boids(self.scene, BOIDS_COUNT, self.borders, [.5, .5, 1])
+        self.boids2 = Boids(self.scene, BOIDS_COUNT,
+                            self.borders, [.7, .7, .2])
 
         self.init_ui()
 
@@ -99,18 +101,19 @@ class Main(Base):
         self.master.update()
 
         values = {
-            'speed': self.speed_slider.get(),
-            'force': self.force_slider.get(),
-            'separation': self.separation_slider.get() / 5,
-            'alignment': self.alignment_slider.get() / 5,
-            'cohesion': self.cohesion_slider.get() / 5,
+            'speed': self.speed_slider.get() * 5,
+            'force': self.force_slider.get() * 5,
+            'separation': self.separation_slider.get() / 100,
+            'alignment': self.alignment_slider.get() / 100,
+            'cohesion': self.cohesion_slider.get() / 100,
             'bound': self.bound_slider.get() / 5,
             'neighbor': self.neighbor_slider.get(),
             'bound_dist': self.bound_dist_slider.get(),
         }
 
         self.controls.update()
-        self.boids.update(1/60, values)
+        self.boids1.update(1/60, values)
+        self.boids2.update(1/60, values)
 
         self.renderer.render(self.scene, self.camera)
 
