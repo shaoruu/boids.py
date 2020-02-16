@@ -17,6 +17,14 @@ BOIDS_COUNT = 30
 
 BOX_DIM = 80
 
+DEFAULT_SPEED = 5
+DEFAULT_FORCE = 5
+DEFAULT_SEPARATION = 3
+DEFAULT_ALIGNMENT = 5
+DEFAULT_COHESION = 2
+DEFAULT_BOUND = 5
+DEFAULT_NEIGHBOR_DIST = 5
+
 
 class Main(Base):
     def initialize(self):
@@ -48,37 +56,37 @@ class Main(Base):
         self.speed_slider = Scale(
             self.master, from_=1, to=10, orient=HORIZONTAL, label='Speed')
         self.speed_slider.pack()
-        self.speed_slider.set(5)
+        self.speed_slider.set(DEFAULT_SPEED)
 
         self.force_slider = Scale(
             self.master, from_=1, to=10, orient=HORIZONTAL, label='Force')
         self.force_slider.pack()
-        self.force_slider.set(5)
+        self.force_slider.set(DEFAULT_FORCE)
 
         self.separation_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Separation')
         self.separation_slider.pack()
-        self.separation_slider.set(5)
+        self.separation_slider.set(DEFAULT_SEPARATION)
 
         self.alignment_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Alignment')
         self.alignment_slider.pack()
-        self.alignment_slider.set(5)
+        self.alignment_slider.set(DEFAULT_ALIGNMENT)
 
         self.cohesion_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Cohesion')
         self.cohesion_slider.pack()
-        self.cohesion_slider.set(5)
+        self.cohesion_slider.set(DEFAULT_COHESION)
 
         self.bound_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Bound Force')
         self.bound_slider.pack()
-        self.bound_slider.set(5)
+        self.bound_slider.set(DEFAULT_BOUND)
 
         self.neighbor_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Neighbor Dist.')
         self.neighbor_slider.pack()
-        self.neighbor_slider.set(5)
+        self.neighbor_slider.set(DEFAULT_NEIGHBOR_DIST)
 
         self.bound_dist_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Bound Dist.')
