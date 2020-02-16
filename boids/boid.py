@@ -118,24 +118,24 @@ class Boid:
         x, y, z = self.position
 
         if x > bw/2 - BORDER_DIST:
-            diff = abs(x - bw/2)
+            diff = abs(x - (bw/2 - BORDER_DIST))
             steer[0] = -bound_strength * diff
         elif x < -bw/2 + BORDER_DIST:
-            diff = abs(x - bw/2)
+            diff = abs(x - (-bw/2 + BORDER_DIST))
             steer[0] = bound_strength * diff
 
         if y > bh/2 - BORDER_DIST:
-            diff = abs(y - bh/2)
+            diff = abs(y - (bh/2 - BORDER_DIST))
             steer[1] = -bound_strength * diff
         elif y < -bh/2 + BORDER_DIST:
-            diff = abs(y - bh/2)
+            diff = abs(y - (-bh/2 + BORDER_DIST))
             steer[1] = bound_strength * diff
 
         if z > bd/2 - BORDER_DIST:
-            diff = abs(z - bd/2)
+            diff = abs(z - (bd/2 - BORDER_DIST))
             steer[2] = -bound_strength * diff
         elif z < -bd/2 + BORDER_DIST:
-            diff = abs(z - bd/2)
+            diff = abs(z - (-bd/2 + BORDER_DIST))
             steer[2] = bound_strength * diff
 
         return steer
@@ -208,7 +208,7 @@ class Boid:
         self.apply_force(coh, max_force)
 
         bound = self.bound(bound_strength, bound_dist)
-        self.apply_force(bound, max_force, limit=False)
+        self.apply_force(bound)
 
         for obstacle in self.obstacles.get_obstacles():
             avoid = self.avoid(obstacle, avoidance_strength, avoidance_dist)

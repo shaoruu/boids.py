@@ -1,8 +1,7 @@
 from ..core import Mesh
 from ..geometry import LineGeometry
 from ..material import LineSegmentMaterial
-
-from cameras import OrthographicCamera
+from ..cameras import OrthographicCamera
 
 
 class OrthographicCameraHelper(Mesh):
