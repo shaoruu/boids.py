@@ -2,6 +2,15 @@
 
 A 3D visualization of Craig Reynold's 'Boids'. Written with Python, OpenGL, and pygame.
 
+<img src="https://i.imgur.com/XKEnktZ.gif" width="100%" style="margin: 20px 0"/>
+
+This project includes the following algorithms:
+
+- Seperation
+- Alighment
+- Cohesion
+- Bounding
+- Avoidance
 
 ## Installation
 
@@ -23,10 +32,10 @@ python run.py
 ```
 
 ## Screenshots
+
 ![](https://i.imgur.com/Gqzj9O3.png)
 
 ![](https://i.imgur.com/KX8qNyS.png)
-
 
 ## Resources
 
