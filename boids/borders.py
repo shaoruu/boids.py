@@ -16,7 +16,7 @@ class Borders:
         self.height = height
         self.depth = depth
 
-        self.generate()
+        # self.generate()
 
     def generate(self):
         width = self.width
@@ -84,3 +84,9 @@ class Borders:
 
     def get_dimensions(self):
         return [self.width * BLOCK_WIDTH, self.height * BLOCK_WIDTH, self.depth * BLOCK_WIDTH]
+
+    def get_min_coords(self):
+        return (-self.width/2, -self.height/2, -self.depth/2)
+
+    def get_max_coords(self):
+        return (self.width/2, self.height/2, self.depth/2)

@@ -11,12 +11,13 @@ from .boids import Boids
 WINDOW_WIDTH = 1600
 WINDOW_HEIGHT = 1200
 
-BOIDS_COUNT = 10
+# BOIDS_COUNT = 1
+BOIDS_COUNT = 30
 
 
 class Main(Base):
     def initialize(self):
-        self.setWindowTitle('Boids')
+        self.setWindowTitle('Flocking')
         self.setWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         self.renderer = Renderer()
@@ -29,11 +30,11 @@ class Main(Base):
         self.scene.add(DirectionalLight(direction=[-1, -1, -1]))
 
         self.camera = PerspectiveCamera(aspectRatio=WINDOW_WIDTH/WINDOW_HEIGHT)
-        self.camera.transform.setPosition(0, 0, 14)
+        self.camera.transform.setPosition(0, 0, 50)
         self.camera.transform.lookAt(0, 0, 0)
         self.controls = FirstPersonController(self.input, self.camera)
 
-        self.borders = Borders(self.scene, 40, 40, 40)
+        self.borders = Borders(self.scene, 100, 100, 100)
         self.boids = Boids(self.scene, BOIDS_COUNT, self.borders)
 
     def update(self):

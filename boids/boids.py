@@ -1,4 +1,8 @@
 from .boid import Boid
+from .octree import Octree
+
+
+ORIGIN = (0, 0, 0)
 
 
 class Boids:
@@ -12,11 +16,17 @@ class Boids:
 
     def initialize(self, count):
         for _ in range(count):
-            self.boids.append(Boid(self.scene, self.boids, self.borders))
+            self.boids.append(Boid(self.scene, self.borders))
 
     def update(self, dt):
+        octree = Octree(*self.borders.get_max_coords(), *
+                        self.borders.get_min_coords(), ORIGIN)
+
         for boid in self.boids:
-            boid.update(dt)
+            octree.add_item(boid, boid.position)
+
+        for boid in self.boids:
+            boid.update(dt, octree)
 
     def draw(self):
         for boid in self.boids:
