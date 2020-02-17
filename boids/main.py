@@ -48,59 +48,80 @@ class Main(Base):
                             self.borders, self.obstacles, [.2, .2, .6])
 
         self.init_ui()
+        self.print_instructions()
 
     def init_ui(self):
         self.master = Tk()
+        self.master.winfo_toplevel().title('Boids Configs')
+        self.master.configure(background='black')
 
         self.speed_slider = Scale(
             self.master, from_=1, to=10, orient=HORIZONTAL, label='Speed')
         self.speed_slider.pack()
         self.speed_slider.set(DEFAULT_SPEED)
+        self.speed_slider.configure(background='white')
 
         self.force_slider = Scale(
             self.master, from_=1, to=10, orient=HORIZONTAL, label='Force')
         self.force_slider.pack()
         self.force_slider.set(DEFAULT_FORCE)
+        self.force_slider.configure(background='white')
 
         self.separation_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Separation')
         self.separation_slider.pack()
         self.separation_slider.set(DEFAULT_SEPARATION)
+        self.separation_slider.configure(background='white')
 
         self.alignment_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Alignment')
         self.alignment_slider.pack()
         self.alignment_slider.set(DEFAULT_ALIGNMENT)
+        self.alignment_slider.configure(background='white')
 
         self.cohesion_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Cohesion')
         self.cohesion_slider.pack()
         self.cohesion_slider.set(DEFAULT_COHESION)
+        self.cohesion_slider.configure(background='white')
 
         self.bound_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Bound Force')
         self.bound_slider.pack()
         self.bound_slider.set(DEFAULT_BOUND)
+        self.bound_slider.configure(background='white')
 
         self.avoid_slider = Scale(
-            self.master, from_=0, to=10, orient=HORIZONTAL, label="Avoidance Force")
+            self.master, from_=0, to=10, orient=HORIZONTAL, label="Avoidance")
         self.avoid_slider.pack()
         self.avoid_slider.set(DEFAULT_AVOID)
+        self.avoid_slider.configure(background='white')
 
         self.neighbor_slider = Scale(
-            self.master, from_=0, to=10, orient=HORIZONTAL, label='Neighbor Dist.')
+            self.master, from_=0, to=10, orient=HORIZONTAL, label='Neighbor')
         self.neighbor_slider.pack()
         self.neighbor_slider.set(DEFAULT_NEIGHBOR_DIST)
+        self.neighbor_slider.configure(background='white')
 
         self.bound_dist_slider = Scale(
             self.master, from_=0, to=10, orient=HORIZONTAL, label='Bound Dist.')
         self.bound_dist_slider.pack()
         self.bound_dist_slider.set(5)
+        self.bound_dist_slider.configure(background='white')
 
         self.avoid_dist_slider = Scale(
-            self.master, from_=0, to=10, orient=HORIZONTAL, label='Avoidance Dist.')
+            self.master, from_=0, to=10, orient=HORIZONTAL, label='Avoid Dist.')
         self.avoid_dist_slider.pack()
         self.avoid_dist_slider.set(5)
+        self.avoid_dist_slider.configure(background='white')
+
+    def print_instructions(self):
+        print("""
+        W,A,S,D to move around
+        Q,E to change horizontal view angle
+        R,F to change vertical view angle
+        Ctrl+W to close
+        """)
 
     def update(self):
         self.check_resize()
