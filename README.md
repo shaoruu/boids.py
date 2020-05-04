@@ -1,8 +1,10 @@
-# Boids
+# [Boids](https://www.youtube.com/watch?v=Tba_LOMF5eM)
 
 A 3D visualization of Craig Reynold's 'Boids'. Written with Python, OpenGL, and pygame.
 
-<img src="https://i.imgur.com/XKEnktZ.gif" width="100%" style="margin: 20px 0"/>
+<a href="https://www.youtube.com/watch?v=Tba_LOMF5eM">
+    <img src="https://i.imgur.com/XKEnktZ.gif" width="100%" style="margin: 20px 0"/>
+</a>
 
 This project includes the following algorithms:
 
