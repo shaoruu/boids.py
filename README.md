@@ -8,7 +8,7 @@ A 3D visualization of Craig Reynold's 'Boids'. Written with Python, OpenGL, and 
 
 This project includes the following algorithms:
 
-- Seperation
+- Separation
 - Alignment
 - Cohesion
 - Bounding
